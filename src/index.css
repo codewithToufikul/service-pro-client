@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Import font here if you didn’t add it in index.html */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+* {
+  font-family: 'Rubik', sans-serif;
+}
