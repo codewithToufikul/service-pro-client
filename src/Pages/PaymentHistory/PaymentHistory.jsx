@@ -38,10 +38,12 @@ function PaymentHistory() {
     switch (status.toLowerCase()) {
       case 'completed':
       case 'successful':
+      case 'validated':
         return 'bg-green-100 text-green-800';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'failed':
+      case 'cancelled':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -52,10 +54,12 @@ function PaymentHistory() {
     switch (status.toLowerCase()) {
       case 'completed':
       case 'successful':
+      case 'validated':
         return <CheckCircle className="w-4 h-4" />;
       case 'pending':
         return <Clock className="w-4 h-4" />;
       case 'failed':
+      case 'cancelled':
         return <AlertCircle className="w-4 h-4" />;
       default:
         return null;
@@ -339,7 +343,7 @@ function PaymentHistory() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {filteredPayments.map((payment) => (
+                      {filteredPayments.slice().reverse().map((payment) => (
                         <tr key={payment._id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">

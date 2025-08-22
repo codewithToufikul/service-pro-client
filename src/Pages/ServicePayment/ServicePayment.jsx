@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../../Component/Navbar';
 import Footer from '../../Component/Footer';
-import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+// Stripe removed
 import toast from 'react-hot-toast';
 import { getUserFromToken } from '../../AuthProvider/getUserFromToken';
 import { jsPDF } from 'jspdf';
@@ -12,29 +12,14 @@ function ServicePayment() {
   const { serviceId } = useParams();
   const [service, setService] = useState(null);
   const user = getUserFromToken();
-  const [clientSecret, setClientSecret] = useState('');
   const [price, setPrice] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);  // To handle modal display
   const [transactionDetails, setTransactionDetails] = useState({});
-  const stripe = useStripe();
-  const elements = useElements();
   const { data, isLoading, isError, error, refetch } = useGetUser();
   // No need for showInvoice state or ref with direct PDF creation approach
 
-  useEffect(() => {
-    if (price && !isNaN(price)) {
-      fetch('https://servies-pro-server.onrender.com/create-payment-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ price: parseFloat(price), serviceId, userId: user.userId }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setClientSecret(data.clientSecret);
-        });
-    }
-  }, [price]);
+  // Stripe clientSecret flow removed
 
   useEffect(() => {
     const fetchService = async () => {
@@ -52,63 +37,34 @@ function ServicePayment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!stripe || !elements) return;
-
-    const card = elements.getElement(CardElement);
-    setIsProcessing(true);
-
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
-      card,
-    });
-
-    if (error) {
-      toast.error(error.message);
-      setIsProcessing(false);
-      return;
-    }
-
-    const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(
-      clientSecret,
-      {
-        payment_method: paymentMethod.id,
-      }
-    );
-
-    if (confirmError) {
-      toast.error(confirmError.message);
-    } else {
-      toast.success('Payment successful!');
-      setPaymentSuccess(true);  // Show success modal
-      setTransactionDetails({
-        amount: price,
-        transactionId: paymentIntent.id,
-        status: paymentIntent.status,
-        serviceId: serviceId,
-      });
-
-      // Send payment data to backend
-      await fetch("https://servies-pro-server.onrender.com/payment-success", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    try {
+      setIsProcessing(true);
+      const resp = await fetch('https://servies-pro-server.onrender.com/initiate-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          amount: parseFloat(price),
           userId: user.userId,
-          userName: data.name,
+          userName: data?.name,
           userProfileImage: data?.profileImage || "https://i.ibb.co/t9Q5HDC/f10ff70a7155e5ab666bcdd1b45b726d.jpg",
           serviceId,
-          serviceName: service.title,
-          amount: price,
-          transactionId: paymentIntent.id,
-          status: paymentIntent.status,
-          orderStatus: "Pending"
-        }),
+          serviceName: service?.title,
+          email: data?.email,
+          phone: data?.number,
+          address: data?.address
+        })
       });
+      const result = await resp.json();
+      if (result?.url) {
+        window.location.href = result.url;
+      } else {
+        toast.error('Failed to initiate payment');
+      }
+    } catch (err) {
+      toast.error('Payment initiation error');
+    } finally {
+      setIsProcessing(false);
     }
-
-    setIsProcessing(false);
   };
 
   const formatDate = () => {
@@ -293,30 +249,14 @@ function ServicePayment() {
             />
           </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium mb-1">Card Details</label>
-            <div className="border p-3 rounded-md">
-              <CardElement
-                options={{
-                  style: {
-                    base: {
-                      fontSize: '16px',
-                      color: '#424770',
-                      '::placeholder': { color: '#aab7c4' },
-                    },
-                    invalid: { color: '#9e2146' },
-                  },
-                }}
-              />
-            </div>
-          </div>
+          {/* Card details removed for SSLCommerz redirect flow */}
 
           <button
             type="submit"
-            disabled={!stripe || !clientSecret || isProcessing}
+            disabled={!price || isProcessing}
             className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50"
           >
-            {isProcessing ? 'Processing...' : `Pay $${price || 0}`}
+            {isProcessing ? 'Processing...' : `Pay ৳${price || 0}`}
           </button>
         </form>
       </div>

@@ -35,6 +35,9 @@ import BlogDetails from "./BlogDetails/BlogDetails";
 import ManageFeedback from "./DashboardPages/ManageFeedback";
 import ManageOrder from "./DashboardPages/ManageOrder";
 import RefundPolicy from "./RefundPolicy/RefundPolicy";
+import PaymentSuccess from "./PaymentResult/Success";
+import PaymentFail from "./PaymentResult/Fail";
+import PaymentCancel from "./PaymentResult/Cancel";
 
 export const router = createBrowserRouter([
   {
@@ -118,6 +121,18 @@ export const router = createBrowserRouter([
   {
     path: "/blogs",
     element: <Blogs/>
+  },
+  {
+    path: "/payment/success",
+    element: <PaymentSuccess/>
+  },
+  {
+    path: "/payment/fail",
+    element: <PaymentFail/>
+  },
+  {
+    path: "/payment/cancel",
+    element: <PaymentCancel/>
   },
   {
     path: "/blog-details/:blogId",
