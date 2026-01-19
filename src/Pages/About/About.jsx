@@ -58,6 +58,18 @@ function About() {
               </li>
             </ul>
           </div>
+
+          {/* Trade License Section */}
+          <div className="bg-gray-50 border-l-4 border-blue-600 p-4 shadow-sm mt-6 rounded-md">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Trade License Information
+            </h3>
+            <p className="text-base text-gray-700">
+              Our Trade License Number is:{" "}
+              <span className="font-bold text-blue-600">10/472</span>
+            </p>
+          </div>
+
           <p className="text-base md:text-lg text-gray-600 mt-4">
             Let us help you create impact, build your brand, and move your vision
             forward.

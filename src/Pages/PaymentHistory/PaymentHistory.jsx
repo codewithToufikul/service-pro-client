@@ -177,7 +177,7 @@ function PaymentHistory() {
     pdf.text(payment.serviceName || 'Service', margin + 5, tableTop + 20);
     
     // Add amount and status
-    pdf.text(`$${payment.amount}`, margin + col1Width + col2Width / 2, tableTop + 10 + rowHeight / 2, { align: 'center' });
+    pdf.text(`BDT ${payment.amount}`, margin + col1Width + col2Width / 2, tableTop + 10 + rowHeight / 2, { align: 'center' });
     pdf.text(payment.status || 'Paid', margin + col1Width + col2Width + col3Width / 2, tableTop + 10 + rowHeight / 2, { align: 'center' });
     
     // Add footer
@@ -354,7 +354,7 @@ function PaymentHistory() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-bold text-gray-900">${payment.amount}</div>
+                            <div className="text-sm font-bold text-gray-900">BDT{payment.amount}</div>
                             <div className="text-xs text-gray-500">{payment.method}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
